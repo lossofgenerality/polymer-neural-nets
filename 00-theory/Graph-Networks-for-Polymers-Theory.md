@@ -58,12 +58,34 @@ warnings.filterwarnings("ignore")   # library notices (tqdm, TorchScript) are no
 NEED = {"numpy": "numpy", "scipy": "scipy", "sympy": "sympy", "matplotlib": "matplotlib", "torch": "torch",
         "torch_geometric": "torch-geometric", "openmm": "openmm", "IPython": "ipython"}
 missing = [pkg for mod, pkg in NEED.items() if importlib.util.find_spec(mod) is None]
+def install(pkgs):
+    """Install pkgs into the Python of this kernel; try pip, then uv; explain clearly if neither works."""
+    import shutil
+    tries = [[sys.executable, "-m", "pip", "install", *pkgs]]
+    if shutil.which("uv"):
+        tries.append(["uv", "pip", "install", "--python", sys.executable, *pkgs])
+    errors = []
+    for cmd in tries:
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True)
+            if r.returncode == 0:
+                importlib.invalidate_caches(); return
+            errors.append(f"{' '.join(cmd[:4])} …: exit code {r.returncode}\n{(r.stderr or r.stdout)[-1200:]}")
+        except OSError as e:
+            errors.append(f"{' '.join(cmd[:4])} …: could not be started ({e})")
+    managed = any("externally-managed" in e for e in errors)
+    raise SystemExit("\n".join([
+        "Could not install " + ", ".join(pkgs) + " into the Python of this Jupyter kernel:", "    " + sys.executable, "",
+        *errors, "",
+        "Fix it in a terminal, in the folder of this repository, with one of these, then restart the kernel:",
+        "  (a) uv:   uv sync   and then   uv run jupyter notebook      (uses the exact versions of uv.lock)",
+        "  (b) venv: python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && jupyter notebook",
+        "            (Windows: .venv\\Scripts\\activate)",
+        f"  (c) this kernel's Python: \"{sys.executable}\" -m pip install " + " ".join(pkgs),
+        "This Python is managed by the system or Homebrew and refuses installs: use (a) or (b)." if managed else ""]))
 if missing:
     print("installing", ", ".join(missing), "(first run only; torch is large) ...")
-    try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", *missing])
-    except Exception:                                             # environments made by uv have no pip
-        subprocess.check_call(["uv", "pip", "install", "--python", sys.executable, *missing])
+    install(missing)
 def find_repo():
     for q in [Path.cwd(), *Path.cwd().parents]:                  # (1) this notebook is inside the repository
         if (q / "src" / "polymer_nn").is_dir() and (q / "data").is_dir():
@@ -222,7 +244,7 @@ print(f"loop {t_loop*1e3:.1f} ms, one matrix product {t_batch*1e3:.2f} ms: {t_lo
 ```
 
 ```text
-loop 27.9 ms, one matrix product 1.56 ms: 18 times faster; max difference 4.4e-16
+loop 52.4 ms, one matrix product 2.68 ms: 20 times faster; max difference 4.4e-16
 ```
 
 ## 2. Loss, backpropagation and training

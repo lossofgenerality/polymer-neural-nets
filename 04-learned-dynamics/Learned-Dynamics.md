@@ -51,12 +51,34 @@ warnings.filterwarnings("ignore")   # library notices (tqdm, TorchScript) are no
 NEED = {"numpy": "numpy", "scipy": "scipy", "sympy": "sympy", "matplotlib": "matplotlib", "torch": "torch",
         "torch_geometric": "torch-geometric", "openmm": "openmm", "IPython": "ipython"}
 missing = [pkg for mod, pkg in NEED.items() if importlib.util.find_spec(mod) is None]
+def install(pkgs):
+    """Install pkgs into the Python of this kernel; try pip, then uv; explain clearly if neither works."""
+    import shutil
+    tries = [[sys.executable, "-m", "pip", "install", *pkgs]]
+    if shutil.which("uv"):
+        tries.append(["uv", "pip", "install", "--python", sys.executable, *pkgs])
+    errors = []
+    for cmd in tries:
+        try:
+            r = subprocess.run(cmd, capture_output=True, text=True)
+            if r.returncode == 0:
+                importlib.invalidate_caches(); return
+            errors.append(f"{' '.join(cmd[:4])} …: exit code {r.returncode}\n{(r.stderr or r.stdout)[-1200:]}")
+        except OSError as e:
+            errors.append(f"{' '.join(cmd[:4])} …: could not be started ({e})")
+    managed = any("externally-managed" in e for e in errors)
+    raise SystemExit("\n".join([
+        "Could not install " + ", ".join(pkgs) + " into the Python of this Jupyter kernel:", "    " + sys.executable, "",
+        *errors, "",
+        "Fix it in a terminal, in the folder of this repository, with one of these, then restart the kernel:",
+        "  (a) uv:   uv sync   and then   uv run jupyter notebook      (uses the exact versions of uv.lock)",
+        "  (b) venv: python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && jupyter notebook",
+        "            (Windows: .venv\\Scripts\\activate)",
+        f"  (c) this kernel's Python: \"{sys.executable}\" -m pip install " + " ".join(pkgs),
+        "This Python is managed by the system or Homebrew and refuses installs: use (a) or (b)." if managed else ""]))
 if missing:
     print("installing", ", ".join(missing), "(first run only; torch is large) ...")
-    try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", *missing])
-    except Exception:                                             # environments made by uv have no pip
-        subprocess.check_call(["uv", "pip", "install", "--python", sys.executable, *missing])
+    install(missing)
 def find_repo():
     for q in [Path.cwd(), *Path.cwd().parents]:                  # (1) this notebook is inside the repository
         if (q / "src" / "polymer_nn").is_dir() and (q / "data").is_dir():
@@ -123,7 +145,7 @@ table([["quantity", "value", "expected"], ["steps run", "1000 (5 τ)", ""], ["wa
 | quantity | value | expected |
 |---|---|---|
 | steps run | 1000 (5 τ) |  |
-| wall time | 3.0 s |  |
+| wall time | 3.2 s |  |
 | mean bond length (σ) | 0.9718 | 0.971 (notebook 02) |
 | mean kinetic energy per bead (ε) | 1.457 | 1.5 = (3/2) k_BT |
 | learned potential energy per bead (ε) | 20.168 | ≈ 20 (reference, notebook 01) |
@@ -279,9 +301,9 @@ torch.set_num_threads(2)
 
 | force field | time per evaluation | relative |
 |---|---|---|
-| exact Kremer–Grest (OpenMM, Reference platform) | 0.24 ms | 1 × |
-| InvariantGNN | 3.22 ms | 13 × |
-| EquivariantGNN | 5.27 ms | 22 × |
+| exact Kremer–Grest (OpenMM, Reference platform) | 0.25 ms | 1 × |
+| InvariantGNN | 3.60 ms | 15 × |
+| EquivariantGNN | 5.10 ms | 21 × |
 
 For the Kremer–Grest model itself the networks are 10–20 times slower than the exact formula, which takes a few arithmetic operations per pair. That is expected and not the point. The purpose of this repository is to build and validate the method on a model where the exact answer is known. The method pays off when the reference is expensive: all-atom force fields, quantum-chemical energies, or coarse-grained potentials of mean force that have no simple formula (notebook 00, section 8). There the network costs the same as here, a few thousand operations per bead, and the reference costs far more. On a GPU, and through `openmm-torch` instead of a Python call every step, the cost per bead drops by orders of magnitude (`docs/running-large.md`).
 
