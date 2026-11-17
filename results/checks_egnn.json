@@ -1,0 +1,82 @@
+{
+  "copyright": "© Computational Classnotes · CC BY-NC-SA 4.0",
+  "model": "egnn",
+  "nve": {
+    "0.001": {
+      "learned": {
+        "drift_per_bead_per_tau": 3.4985149364941044e-06,
+        "std_per_bead": 5.4184889499496535e-05,
+        "max_abs_dev_per_bead": 0.00026703902363323095
+      },
+      "reference": {
+        "drift_per_bead_per_tau": -1.2642761921248257e-06,
+        "std_per_bead": 5.544336509228168e-05,
+        "max_abs_dev_per_bead": 0.00022364468265578807
+      }
+    },
+    "0.002": {
+      "learned": {
+        "drift_per_bead_per_tau": 8.853731369703845e-06,
+        "std_per_bead": 0.00021727060062443375,
+        "max_abs_dev_per_bead": 0.0010714775826308198
+      },
+      "reference": {
+        "drift_per_bead_per_tau": -2.084652989727918e-06,
+        "std_per_bead": 0.0002194000886723463,
+        "max_abs_dev_per_bead": 0.000859958482532619
+      }
+    },
+    "0.004": {
+      "learned": {
+        "drift_per_bead_per_tau": 4.463969358232676e-05,
+        "std_per_bead": 0.000889829133956194,
+        "max_abs_dev_per_bead": 0.004274180302434871
+      },
+      "reference": {
+        "drift_per_bead_per_tau": 6.812656344430319e-06,
+        "std_per_bead": 0.0008548893296363478,
+        "max_abs_dev_per_bead": 0.0035561816756626285
+      }
+    }
+  },
+  "structure": {
+    "bond_length": {
+      "wasserstein": 0.0005238498450296134,
+      "ks_stat": 0.009661290322580646,
+      "mean_diff": -0.0004638659064003514,
+      "std_ratio": 1.0017363265959398
+    },
+    "bond_angle": {
+      "wasserstein": 0.0059884189973188765,
+      "ks_stat": 0.010033333333333228,
+      "mean_diff": -0.004289094089310996,
+      "std_ratio": 0.9915808140358364
+    },
+    "kinetic_per_bead_over_kT": 1.475975738333136
+  },
+  "scaling": {
+    "sizes": [
+      16,
+      32,
+      64
+    ],
+    "rg": [
+      2.344341013457172,
+      3.667711696652856,
+      5.586478214138333
+    ],
+    "nu": 0.6263783168480314,
+    "nu_err": 0.011154106672367875,
+    "reference_rg": [
+      2.292150371608584,
+      3.6371915050278503,
+      5.587232667629923
+    ],
+    "pivot_rg": [
+      2.3116904125875406,
+      3.6041832213377814,
+      5.679219947829333
+    ],
+    "reference_nu": 0.6427161035960199
+  }
+}

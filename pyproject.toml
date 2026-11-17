@@ -1,0 +1,38 @@
+# © Computational Classnotes · CC BY-NC-SA 4.0
+# Polymer Neural Nets, version 1.0.0 (2026-11-17)
+[project]
+name = "polymer-neural-nets"
+version = "1.0.0"
+description = "Graph neural network force fields for polymers: theory, OpenMM reference data, training and learned dynamics"
+readme = "README.md"
+authors = [{ name = "Dara O Shayda" }, { name = "Noor Hoshino" }]
+license = "CC-BY-NC-SA-4.0"
+license-files = ["LICENSE.md"]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.0",
+    "scipy>=1.13",
+    "sympy>=1.13",
+    "matplotlib>=3.9",
+    "torch>=2.4",
+    "torch-geometric>=2.6",
+    "openmm>=8.2",
+    "reportlab>=4.0",
+    "ipykernel>=6.29",
+    "jupyterlab>=4.2",
+    "nbconvert>=7.16",
+    "nbformat>=5.10",
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/polymer_nn"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+filterwarnings = ["ignore::FutureWarning", "ignore::UserWarning", "ignore::DeprecationWarning"]

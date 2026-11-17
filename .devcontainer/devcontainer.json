@@ -1,0 +1,21 @@
+{
+  // GitHub Codespaces: Python 3.14 and the libraries of uv.lock, with the Jupyter extension.
+  // © Computational Classnotes · CC BY-NC-SA 4.0
+  // Polymer Neural Nets, version 1.0.0 (2026-11-17)
+  "name": "Polymer Neural Nets · Computational Classnotes (Python 3.14)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "hostRequirements": { "cpus": 4 },
+  "postCreateCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && $HOME/.local/bin/uv sync",
+  "customizations": {
+    "codespaces": {
+      "openFiles": ["00-theory/Graph-Networks-for-Polymers-Theory.ipynb"]
+    },
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-toolsai.jupyter"],
+      "settings": {
+        "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+        "jupyter.kernels.excludePythonEnvironments": ["/usr/bin/python3", "/bin/python3"]
+      }
+    }
+  }
+}
