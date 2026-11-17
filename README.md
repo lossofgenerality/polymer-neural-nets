@@ -71,7 +71,7 @@ The bibliography, by Dara and Hoshino: [`docs/REFERENCES.md`](docs/REFERENCES.md
 
 ## Using the notebooks
 
-Every notebook runs on its own in any Jupyter. Its first cell, c.0, installs any missing libraries with pip, finds the repository folder, and, if the notebook was opened by itself, downloads the code and data of this repository once from GitHub into `polymer-neural-nets` in your home folder. Then choose Kernel → Restart Kernel and Run All Cells. Every code cell starts with an index comment such as `# c.7`, and the cells run in order from c.0. Each notebook runs in under a minute on a laptop.
+Every notebook runs on its own in any Jupyter. Its first cell, c.0, installs any missing libraries with pip, finds the repository folder, and, if the notebook was opened by itself, downloads the code and data of this repository once from GitHub into `polymer-neural-nets` in your home folder; the details are in [Running a notebook on its own in Jupyter](#running-a-notebook-on-its-own-in-jupyter). Then choose Kernel → Restart Kernel and Run All Cells. Every code cell starts with an index comment such as `# c.7`, and the cells run in order from c.0. Each notebook runs in under a minute on a laptop.
 
 ### In your own Jupyter (JupyterLab, Jupyter Notebook, VS Code, Anaconda)
 
@@ -108,6 +108,78 @@ Click the button and then **Create codespace**; the theory notebook opens by its
 | the two models | `scripts/train.py` (commands in notebook 03, section 4) | about 5 min each |
 | the checks with the learned forces | `scripts/run_md.py --model models/invariant.pt --ref data/kg_N32.npz --scaling data/scaling_kg.npz --replicas 8` | about 15–25 min per model |
 | notebooks, editions, bibliography | `scripts/build_all.sh` | about 3 min |
+
+## Running a notebook on its own in Jupyter
+
+Every notebook can run by itself, outside this repository, in any Jupyter: JupyterLab, Jupyter Notebook, VS Code, PyCharm or Anaconda Navigator. Download one `.ipynb` file (on GitHub: open the file and click **Download raw file**, the download arrow above the file), open it in Jupyter and choose **Kernel → Restart Kernel and Run All Cells**. Nothing else needs to be set up by hand.
+
+### What you need
+
+| | |
+|---|---|
+| Python | 3.10 or later, with Jupyter (the notebooks were run with Python 3.14) |
+| internet | on the first run only: to install the libraries and download the repository |
+| disk space | about 15 MB for the repository; PyTorch is the largest library, a few hundred MB on macOS and Windows and a few GB on Linux, where the standard wheel includes the NVIDIA GPU libraries |
+| a GPU | not needed; everything runs on the CPU |
+
+### What the first cell (c.0) does, step by step
+
+1. **Checks the libraries.** It looks for each library below in the Python of the running Jupyter kernel and installs the missing ones with `pip` into that same Python (`python -m pip install …`). In environments made by uv, which have no pip, it uses `uv pip install --python …` instead. The first install can take several minutes because of PyTorch; later runs skip this step.
+
+   | imported as | installed as | used for |
+   |---|---|---|
+   | `numpy` | `numpy` | arrays |
+   | `scipy` | `scipy` | fits and statistical tests |
+   | `sympy` | `sympy` | the symbolic derivations of notebooks 00 and 01 |
+   | `matplotlib` | `matplotlib` | figures |
+   | `torch` | `torch` | the networks, autograd, training |
+   | `torch_geometric` | `torch-geometric` | graphs and message passing |
+   | `openmm` | `openmm` | the molecular dynamics |
+   | `IPython` | `ipython` | tables in the notebook |
+
+2. **Finds the repository.** It looks in the notebook's folder and in every folder above it for `src/polymer_nn` and `data/`. If the notebook is inside a copy of this repository, that copy is used and nothing is downloaded.
+
+3. **Otherwise downloads it once.** It downloads `https://github.com/lossofgenerality/polymer-neural-nets/archive/refs/heads/main.zip` (about 15 MB) and unpacks it into a folder `polymer-neural-nets` in your home folder: `~/polymer-neural-nets` on macOS and Linux, `C:\Users\<you>\polymer-neural-nets` on Windows. Every later run, of this or any other notebook, finds that folder and downloads nothing.
+
+4. **Uses the repository's code.** It puts the repository's `src` folder first on Python's search path, so `import polymer_nn` loads the code that belongs to the data and models.
+
+5. **Sets up the notebook.** It applies the figure and table style, uses 2 CPU threads, fixes the random seeds, and prints one line such as `repository folder: polymer-neural-nets | Python 3.14.6 | torch 2.15.0 | numpy 2.5.5`.
+
+### What each notebook reads and writes
+
+| notebook | reads from the repository | run time on a laptop |
+|---|---|---|
+| 00 · The Theory | `data/kg_N32.npz` | about 30 s |
+| 01 · The Data and the Graph | `data/kg_N32.npz`, `data/kg_N64.npz`, `data/scaling_kg.npz`, `models/invariant.pt`, `models/egnn.pt`, `models/invariant.json`, `results/checks_invariant.npz` | about 15 s |
+| 02 · Reference Simulations | `data/kg_N32.npz`, `data/scaling_kg.npz`, `data/scaling_ideal.npz` | about 20 s |
+| 03 · Training | `data/kg_N32.npz`, `data/kg_N64.npz`, `models/*.pt`, `models/*.json` | about 15 s |
+| 04 · Learned Dynamics | `data/kg_N32.npz`, `data/kg_N64.npz`, `data/scaling_kg.npz`, `models/*.pt`, `results/checks_*.json`, `results/checks_*.npz` | about 15 s |
+
+The run times are for a run after the first; the first run adds the time to install the libraries and download the repository. Each notebook writes only its figures, as PNG files in a folder `figures` next to the notebook; nothing in the repository is changed. The long computations (making the data, training, the full MD checks) are not repeated in the notebooks; their results are read from `data/`, `models/` and `results/`. Each notebook also runs a short live version, such as a simulation, a training run or an OpenMM run with the network, so every step can be seen working. See [Making everything again](#making-everything-again) to redo the long runs.
+
+### Getting a newer version
+
+The downloaded copy is not updated automatically. To get the latest version, delete the folder `polymer-neural-nets` in your home folder and run cell c.0 again, or use `git clone` and `git pull` (next section).
+
+### Working offline
+
+Run any notebook once while online, or clone the repository while online (`git clone https://github.com/lossofgenerality/polymer-neural-nets`), and install the libraries with `pip install -r requirements.txt`. After that no internet connection is needed.
+
+### If something goes wrong
+
+| problem | what to do |
+|---|---|
+| `ModuleNotFoundError` right after the libraries were installed | restart the kernel (Kernel → Restart Kernel) and run again: a library installed during a session is sometimes visible only after a restart |
+| the libraries are installed in the wrong Python | choose the kernel of the Python where you want them (Kernel → Change Kernel); c.0 always installs into the Python of the running kernel |
+| `No module named pip` | run `python -m ensurepip` in that Python, or install uv, which c.0 then uses |
+| OpenMM does not install with pip (older systems) | install it with conda: `conda install -c conda-forge openmm`, then run c.0 again |
+| the download is blocked by a firewall or proxy | download the zip above in a browser, unzip it, rename the folder to `polymer-neural-nets` and put it in your home folder, or put the notebook inside the unzipped folder |
+| an old copy in your home folder no longer matches the notebook | delete `~/polymer-neural-nets` and run c.0 again |
+| PyTorch takes too much disk space on Linux | install the CPU-only build first: `pip install torch --index-url https://download.pytorch.org/whl/cpu` |
+
+### Removing it again
+
+Delete the folder `polymer-neural-nets` in your home folder and the `figures` folders next to the notebooks. To remove the libraries as well, run `pip uninstall torch torch-geometric openmm` (and the others in the table above, if nothing else uses them).
 
 ## The code
 
