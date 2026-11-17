@@ -111,7 +111,7 @@ Click the button and then **Create codespace**; the theory notebook opens by its
 
 ## Running a notebook on its own in Jupyter
 
-Every notebook can run by itself, outside this repository, in any Jupyter: JupyterLab, Jupyter Notebook, VS Code, PyCharm or Anaconda Navigator. Download one `.ipynb` file (on GitHub: open the file and click **Download raw file**, the download arrow above the file), open it in Jupyter and choose **Kernel → Restart Kernel and Run All Cells**. Nothing else needs to be set up by hand.
+Every notebook can run by itself, outside this repository, in any Jupyter that runs a real Python on your computer: JupyterLab, Jupyter Notebook, VS Code, PyCharm or Anaconda Navigator. Jupyters that run Python inside the web page (JupyterLite, Pyodide) cannot run PyTorch and OpenMM; see the troubleshooting table below. Download one `.ipynb` file (on GitHub: open the file and click **Download raw file**, the download arrow above the file), open it in Jupyter and choose **Kernel → Restart Kernel and Run All Cells**. Nothing else needs to be set up by hand.
 
 ### What you need
 
@@ -169,6 +169,7 @@ Run any notebook once while online, or clone the repository while online (`git c
 
 | problem | what to do |
 |---|---|
+| c.0 says *This Jupyter runs Python inside the web browser* (JupyterLite, Pyodide; paths such as `/home/pyodide/…`) | a Jupyter that runs Python inside the web page cannot run PyTorch or OpenMM. Use Jupyter with a real Python on your computer, which also opens in the browser: install [uv](https://docs.astral.sh/uv/), then `git clone https://github.com/lossofgenerality/polymer-neural-nets`, `cd polymer-neural-nets`, `uv sync`, `uv run jupyter notebook`. The saved outputs can still be read in the notebook and in the `.md` and `.pdf` editions |
 | `ModuleNotFoundError` right after the libraries were installed | restart the kernel (Kernel → Restart Kernel) and run again: a library installed during a session is sometimes visible only after a restart |
 | the libraries are installed in the wrong Python | choose the kernel of the Python where you want them (Kernel → Change Kernel); c.0 always installs into the Python of the running kernel |
 | `No module named pip` | run `python -m ensurepip` in that Python, or install uv, which c.0 then uses |

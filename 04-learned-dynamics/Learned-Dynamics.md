@@ -51,6 +51,19 @@ warnings.filterwarnings("ignore")   # library notices (tqdm, TorchScript) are no
 NEED = {"numpy": "numpy", "scipy": "scipy", "sympy": "sympy", "matplotlib": "matplotlib", "torch": "torch",
         "torch_geometric": "torch-geometric", "openmm": "openmm", "IPython": "ipython"}
 missing = [pkg for mod, pkg in NEED.items() if importlib.util.find_spec(mod) is None]
+if sys.platform == "emscripten":                                 # JupyterLite / Pyodide: Python inside the web page
+    raise SystemExit("\n".join([
+        "This Jupyter runs Python inside the web browser (JupyterLite / Pyodide, WebAssembly).",
+        "PyTorch and OpenMM are not available there, and nothing can be installed with pip, so this notebook",
+        "cannot run in it. The saved results are still shown in the notebook, and in the .md and .pdf editions.",
+        "",
+        "To run it, use Jupyter with a real Python on your computer. It also opens in the browser. In a terminal:",
+        "  1. install uv (once):   curl -LsSf https://astral.sh/uv/install.sh | sh",
+        "                          (Windows PowerShell: irm https://astral.sh/uv/install.ps1 | iex)",
+        "  2. get the repository:  git clone https://github.com/lossofgenerality/polymer-neural-nets",
+        "                          cd polymer-neural-nets",
+        "  3. install and start:   uv sync   then   uv run jupyter notebook",
+        "Then open this notebook in the Jupyter tab that appears and choose Kernel → Restart Kernel and Run All Cells."]))
 def install(pkgs):
     """Install pkgs into the Python of this kernel; try pip, then uv; explain clearly if neither works."""
     import shutil
@@ -145,7 +158,7 @@ table([["quantity", "value", "expected"], ["steps run", "1000 (5 τ)", ""], ["wa
 | quantity | value | expected |
 |---|---|---|
 | steps run | 1000 (5 τ) |  |
-| wall time | 3.2 s |  |
+| wall time | 3.1 s |  |
 | mean bond length (σ) | 0.9718 | 0.971 (notebook 02) |
 | mean kinetic energy per bead (ε) | 1.457 | 1.5 = (3/2) k_BT |
 | learned potential energy per bead (ε) | 20.168 | ≈ 20 (reference, notebook 01) |
@@ -301,9 +314,9 @@ torch.set_num_threads(2)
 
 | force field | time per evaluation | relative |
 |---|---|---|
-| exact Kremer–Grest (OpenMM, Reference platform) | 0.25 ms | 1 × |
-| InvariantGNN | 3.60 ms | 15 × |
-| EquivariantGNN | 5.10 ms | 21 × |
+| exact Kremer–Grest (OpenMM, Reference platform) | 0.26 ms | 1 × |
+| InvariantGNN | 3.48 ms | 13 × |
+| EquivariantGNN | 5.94 ms | 23 × |
 
 For the Kremer–Grest model itself the networks are 10–20 times slower than the exact formula, which takes a few arithmetic operations per pair. That is expected and not the point. The purpose of this repository is to build and validate the method on a model where the exact answer is known. The method pays off when the reference is expensive: all-atom force fields, quantum-chemical energies, or coarse-grained potentials of mean force that have no simple formula (notebook 00, section 8). There the network costs the same as here, a few thousand operations per bead, and the reference costs far more. On a GPU, and through `openmm-torch` instead of a Python call every step, the cost per bead drops by orders of magnitude (`docs/running-large.md`).
 

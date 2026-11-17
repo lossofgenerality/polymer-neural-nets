@@ -50,6 +50,19 @@ warnings.filterwarnings("ignore")   # library notices (tqdm, TorchScript) are no
 NEED = {"numpy": "numpy", "scipy": "scipy", "sympy": "sympy", "matplotlib": "matplotlib", "torch": "torch",
         "torch_geometric": "torch-geometric", "openmm": "openmm", "IPython": "ipython"}
 missing = [pkg for mod, pkg in NEED.items() if importlib.util.find_spec(mod) is None]
+if sys.platform == "emscripten":                                 # JupyterLite / Pyodide: Python inside the web page
+    raise SystemExit("\n".join([
+        "This Jupyter runs Python inside the web browser (JupyterLite / Pyodide, WebAssembly).",
+        "PyTorch and OpenMM are not available there, and nothing can be installed with pip, so this notebook",
+        "cannot run in it. The saved results are still shown in the notebook, and in the .md and .pdf editions.",
+        "",
+        "To run it, use Jupyter with a real Python on your computer. It also opens in the browser. In a terminal:",
+        "  1. install uv (once):   curl -LsSf https://astral.sh/uv/install.sh | sh",
+        "                          (Windows PowerShell: irm https://astral.sh/uv/install.ps1 | iex)",
+        "  2. get the repository:  git clone https://github.com/lossofgenerality/polymer-neural-nets",
+        "                          cd polymer-neural-nets",
+        "  3. install and start:   uv sync   then   uv run jupyter notebook",
+        "Then open this notebook in the Jupyter tab that appears and choose Kernel → Restart Kernel and Run All Cells."]))
 def install(pkgs):
     """Install pkgs into the Python of this kernel; try pip, then uv; explain clearly if neither works."""
     import shutil
@@ -137,7 +150,7 @@ table([["quantity", "value", "expected"], ["wall time for 25 000 + 20 000 steps"
 
 | quantity | value | expected |
 |---|---|---|
-| wall time for 25 000 + 20 000 steps | 7.6 s |  |
+| wall time for 25 000 + 20 000 steps | 7.3 s |  |
 | mean bond length (σ) | 0.9710 | ≈ 0.97 (Kremer–Grest) |
 | ⟨R_g²⟩^½ (σ) | 2.179 | ≈ 2.3 (section 2) |
 | mean kinetic energy per bead (ε) | 1.510 | 1.5 = (3/2) k_BT |

@@ -58,6 +58,19 @@ warnings.filterwarnings("ignore")   # library notices (tqdm, TorchScript) are no
 NEED = {"numpy": "numpy", "scipy": "scipy", "sympy": "sympy", "matplotlib": "matplotlib", "torch": "torch",
         "torch_geometric": "torch-geometric", "openmm": "openmm", "IPython": "ipython"}
 missing = [pkg for mod, pkg in NEED.items() if importlib.util.find_spec(mod) is None]
+if sys.platform == "emscripten":                                 # JupyterLite / Pyodide: Python inside the web page
+    raise SystemExit("\n".join([
+        "This Jupyter runs Python inside the web browser (JupyterLite / Pyodide, WebAssembly).",
+        "PyTorch and OpenMM are not available there, and nothing can be installed with pip, so this notebook",
+        "cannot run in it. The saved results are still shown in the notebook, and in the .md and .pdf editions.",
+        "",
+        "To run it, use Jupyter with a real Python on your computer. It also opens in the browser. In a terminal:",
+        "  1. install uv (once):   curl -LsSf https://astral.sh/uv/install.sh | sh",
+        "                          (Windows PowerShell: irm https://astral.sh/uv/install.ps1 | iex)",
+        "  2. get the repository:  git clone https://github.com/lossofgenerality/polymer-neural-nets",
+        "                          cd polymer-neural-nets",
+        "  3. install and start:   uv sync   then   uv run jupyter notebook",
+        "Then open this notebook in the Jupyter tab that appears and choose Kernel → Restart Kernel and Run All Cells."]))
 def install(pkgs):
     """Install pkgs into the Python of this kernel; try pip, then uv; explain clearly if neither works."""
     import shutil
@@ -244,7 +257,7 @@ print(f"loop {t_loop*1e3:.1f} ms, one matrix product {t_batch*1e3:.2f} ms: {t_lo
 ```
 
 ```text
-loop 52.4 ms, one matrix product 2.68 ms: 20 times faster; max difference 4.4e-16
+loop 33.2 ms, one matrix product 1.31 ms: 25 times faster; max difference 4.4e-16
 ```
 
 ## 2. Loss, backpropagation and training
