@@ -1873,6 +1873,23 @@ wheels = [
 ]
 
 [[package]]
+name = "notebook"
+version = "7.6.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jupyter-builder" },
+    { name = "jupyter-server" },
+    { name = "jupyterlab" },
+    { name = "jupyterlab-server" },
+    { name = "notebook-shim" },
+    { name = "tornado" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/39/88/737faf4a8700326a3ee12802f79041471764699cd40b4770a6c66497738f/notebook-7.6.5.tar.gz", hash = "sha256:5e3445616fb2c590015434045f5b297566c2e09c636d1837efc62bef85892c9f", size = 5581297, upload-time = "2026-11-06T15:15:12.121Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/db/fe/3388224bbb7d9e68ad0325af0164d05c3ae20a8cc78d5d91c218581911d9/notebook-7.6.5-py3-none-any.whl", hash = "sha256:b27b4af6e410e7456cfffc6fb5a764dcfb7a331408907d483024d6ddb5ec05f2", size = 5629845, upload-time = "2026-11-06T15:15:09.229Z" },
+]
+
+[[package]]
 name = "notebook-shim"
 version = "0.2.4"
 source = { registry = "https://pypi.org/simple" }
@@ -2277,6 +2294,7 @@ dependencies = [
     { name = "matplotlib" },
     { name = "nbconvert" },
     { name = "nbformat" },
+    { name = "notebook" },
     { name = "numpy" },
     { name = "openmm" },
     { name = "pytest" },
@@ -2294,6 +2312,7 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.9" },
     { name = "nbconvert", specifier = ">=7.16" },
     { name = "nbformat", specifier = ">=5.10" },
+    { name = "notebook", specifier = ">=7.2" },
     { name = "numpy", specifier = ">=2.0" },
     { name = "openmm", specifier = ">=8.2" },
     { name = "pytest", specifier = ">=8.0" },

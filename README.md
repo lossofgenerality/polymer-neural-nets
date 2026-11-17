@@ -91,7 +91,7 @@ Python 3.10 or later works; the notebooks were run with Python 3.14. With conda,
 ```
 uv sync            # Python 3.14 and the exact library versions of uv.lock, in .venv
 uv run pytest      # 24 tests, about 10 s
-uv run jupyter lab
+uv run jupyter lab   # or: uv run jupyter notebook (the classic interface)
 ```
 
 ### In the browser, with nothing to install
