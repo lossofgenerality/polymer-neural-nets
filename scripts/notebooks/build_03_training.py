@@ -33,7 +33,7 @@ Two graph networks, the SchNet-style `InvariantGNN` (61 000 weights) and the EGN
 - Section 6, the energy constant: Eqs. (4)–(5), Theorem 1, Table 7, cell c.6.
 - Section 7, training your own models: Table 8.
 """))
-A(md("## 0. Settings"))
+A(md("## 0. Settings\n\nCell c.0 makes the notebook run in any Jupyter: it installs missing libraries, finds the repository folder or downloads it once from GitHub into `~/polymer-neural-nets` when this notebook is opened on its own, and sets the style of figures and tables."))
 A(code(SETUP))
 A(md(r"""
 ## 1. The data and the loss

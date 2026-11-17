@@ -45,7 +45,7 @@ Every code cell starts with a comment such as `# c.7` giving its index, and the 
 A(md(r"""
 ## 0. Settings
 
-Cell c.0 imports the libraries and sets the style of every figure and table (font size 14 in figures, 10 in tables, widths that print well on A4). The helpers `table`, `nform` and `sci` are in `src/polymer_nn/nbtools.py`.
+Cell c.0 makes the notebook run in any Jupyter. It installs missing libraries with pip, finds the repository folder (or, if this notebook was opened on its own, downloads the repository's code and data once from GitHub into `~/polymer-neural-nets`), and sets the style of every figure and table: font size 14 in figures, 10 in tables, and widths that print well on A4. The helpers `table`, `nform` and `sci` are in `src/polymer_nn/nbtools.py`.
 """))
 A(code(SETUP))
 

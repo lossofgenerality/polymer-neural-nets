@@ -56,7 +56,10 @@ def setup(threads: int = 2) -> Path:
         "legend.fontsize": figFont - 3, "legend.frameon": False, "xtick.labelsize": figFont - 2,
         "ytick.labelsize": figFont - 2, "figure.dpi": 110, "savefig.dpi": 150, "savefig.bbox": "tight",
         "axes.spines.top": False, "axes.spines.right": False, "mathtext.fontset": "cm"})
-    return repo_root()
+    try:
+        return repo_root()
+    except FileNotFoundError:  # a notebook run outside the repository folder
+        return Path(__file__).resolve().parents[2]
 
 
 def nform(v, d: int = 4) -> str:

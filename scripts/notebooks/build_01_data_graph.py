@@ -33,7 +33,7 @@ A network can only be as good as its data, and it can only be understood if one 
 - Section 7, what comes out: Figures 7–8, Table 12, cell c.11.
 - Section 8, summary: Table 13.
 """))
-A(md("## 0. Settings"))
+A(md("## 0. Settings\n\nCell c.0 makes the notebook run in any Jupyter: it installs missing libraries, finds the repository folder or downloads it once from GitHub into `~/polymer-neural-nets` when this notebook is opened on its own, and sets the style of figures and tables."))
 A(code(SETUP))
 
 # ------------------------------------------------------------------ 1

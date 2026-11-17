@@ -29,7 +29,7 @@ A learned force field is judged by what a simulation with it produces, so the ya
 - Section 4, energy conservation: Figure 3, Table 5, cell c.5.
 - Section 5, what the networks must reproduce: Table 6.
 """))
-A(md("## 0. Settings"))
+A(md("## 0. Settings\n\nCell c.0 makes the notebook run in any Jupyter: it installs missing libraries, finds the repository folder or downloads it once from GitHub into `~/polymer-neural-nets` when this notebook is opened on its own, and sets the style of figures and tables."))
 A(code(SETUP))
 A(md(r"""
 ## 1. A live simulation

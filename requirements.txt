@@ -1,0 +1,17 @@
+# © Computational Classnotes · CC BY-NC-SA 4.0
+# Polymer Neural Nets, version 1.0.0 (2026-11-17)
+# For plain pip users:  pip install -r requirements.txt   then   jupyter lab
+# (uv users: `uv sync` installs the exact versions of uv.lock instead.)
+numpy>=2.0
+scipy>=1.13
+sympy>=1.13
+matplotlib>=3.9
+torch>=2.4
+torch-geometric>=2.6
+openmm>=8.2
+reportlab>=4.0
+jupyterlab>=4.2
+ipykernel>=6.29
+nbconvert>=7.16
+nbformat>=5.10
+pytest>=8.0

@@ -38,25 +38,59 @@ A network can only be as good as its data, and it can only be understood if one 
 
 ## 0. Settings
 
+Cell c.0 makes the notebook run in any Jupyter: it installs missing libraries, finds the repository folder or downloads it once from GitHub into `~/polymer-neural-nets` when this notebook is opened on its own, and sets the style of figures and tables.
+
 ```python
 # c.0
-# settings and imports used by every cell below
-import json, math, time, warnings
-warnings.filterwarnings("ignore")   # library notices (tqdm, TorchScript) are not part of the results
+# Setup. This cell makes the notebook run in any Jupyter, three ways:
+#  (1) inside the repository folder (e.g. `uv run jupyter lab`, or `pip install -r requirements.txt` then `jupyter lab`);
+#  (2) in any Python environment: libraries that are missing are installed with pip into this kernel;
+#  (3) as a single notebook file on its own: the code and data of the repository are downloaded once from
+#      GitHub into the folder polymer-neural-nets in your home folder.
+import importlib.util, subprocess, sys, io, zipfile, urllib.request, warnings
 from pathlib import Path
+warnings.filterwarnings("ignore")   # library notices (tqdm, TorchScript) are not part of the results
+NEED = {"numpy": "numpy", "scipy": "scipy", "sympy": "sympy", "matplotlib": "matplotlib", "torch": "torch",
+        "torch_geometric": "torch-geometric", "openmm": "openmm", "IPython": "ipython"}
+missing = [pkg for mod, pkg in NEED.items() if importlib.util.find_spec(mod) is None]
+if missing:
+    print("installing", ", ".join(missing), "(first run only; torch is large) ...")
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", *missing])
+    except Exception:                                             # environments made by uv have no pip
+        subprocess.check_call(["uv", "pip", "install", "--python", sys.executable, *missing])
+def find_repo():
+    for q in [Path.cwd(), *Path.cwd().parents]:                  # (1) this notebook is inside the repository
+        if (q / "src" / "polymer_nn").is_dir() and (q / "data").is_dir():
+            return q
+    home = Path.home() / "polymer-neural-nets"                    # (3) download it once
+    if not (home / "src" / "polymer_nn").is_dir():
+        url = "https://github.com/lossofgenerality/polymer-neural-nets/archive/refs/heads/main.zip"
+        print("downloading the repository (code, data, models) from", url)
+        with zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(url).read())) as z:
+            top = z.namelist()[0].split("/")[0]
+            for m in z.infolist():
+                rel = m.filename[len(top) + 1:]
+                if rel and not m.is_dir():
+                    (home / rel).parent.mkdir(parents=True, exist_ok=True)
+                    (home / rel).write_bytes(z.read(m))
+    return home
+ROOT = find_repo()
+sys.path.insert(0, str(ROOT / "src"))                             # use the repository's polymer_nn
+import json, math, time
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
 from polymer_nn import nbtools as nb
 from polymer_nn.nbtools import table, nform, sci, savefig, figFont, wFull, wHalf, red, blue, green, orange, grey
-ROOT = nb.setup(threads=2)          # plot style, 2 CPU threads, the repository folder
+nb.setup(threads=2)                 # plot style and 2 CPU threads; figures are saved in ./figures
 DATA = ROOT / "data"                # the reference data made by scripts/generate_data.py
 torch.manual_seed(0); rng = np.random.default_rng(0)
-print("repository:", ROOT.name, "| torch", torch.__version__, "| numpy", np.__version__)
+print("repository folder:", ROOT.name, "| Python", sys.version.split()[0], "| torch", torch.__version__, "| numpy", np.__version__)
 ```
 
 ```text
-repository: polymer-neural-nets | torch 2.15.0+cu132 | numpy 2.5.5
+repository folder: polymer-neural-nets | Python 3.14.6 | torch 2.15.0+cu132 | numpy 2.5.5
 ```
 
 ## 1. Where the data come from

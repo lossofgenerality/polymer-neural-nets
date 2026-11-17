@@ -32,7 +32,7 @@ A force field is useful only if a simulation driven by it behaves like the real 
 - Section 5, cost: Table 5, cell c.5.
 - Section 6, limits and next steps.
 """))
-A(md("## 0. Settings"))
+A(md("## 0. Settings\n\nCell c.0 makes the notebook run in any Jupyter: it installs missing libraries, finds the repository folder or downloads it once from GitHub into `~/polymer-neural-nets` when this notebook is opened on its own, and sets the style of figures and tables."))
 A(code(SETUP))
 A(md(r"""
 ## 1. The network inside OpenMM

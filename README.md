@@ -71,15 +71,22 @@ The bibliography, by Dara and Hoshino: [`docs/REFERENCES.md`](docs/REFERENCES.md
 
 ## Using the notebooks
 
-### In the browser, with nothing to install
+Every notebook runs on its own in any Jupyter. Its first cell, c.0, installs any missing libraries with pip, finds the repository folder, and, if the notebook was opened by itself, downloads the code and data of this repository once from GitHub into `polymer-neural-nets` in your home folder. Then choose Kernel → Restart Kernel and Run All Cells. Every code cell starts with an index comment such as `# c.7`, and the cells run in order from c.0. Each notebook runs in under a minute on a laptop.
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/lossofgenerality/polymer-neural-nets?quickstart=1)
+### In your own Jupyter (JupyterLab, Jupyter Notebook, VS Code, Anaconda)
 
-Click the button and then **Create codespace**. GitHub starts a Linux machine with Python 3.14 and the libraries of `uv.lock`; the first start takes a few minutes. The theory notebook opens by itself: click **Run All**, and if you are asked for a kernel, choose `.venv`. Stop the codespace when you are done (github.com/codespaces → ··· → Stop codespace).
+Either download one notebook and open it, which is all you need, or get the whole repository and install the libraries first:
 
-### On your own computer
+```
+git clone https://github.com/lossofgenerality/polymer-neural-nets
+cd polymer-neural-nets
+pip install -r requirements.txt     # NumPy, SciPy, SymPy, Matplotlib, PyTorch, PyTorch Geometric, OpenMM, Jupyter
+jupyter lab
+```
 
-Install [uv](https://docs.astral.sh/uv/) and, in the folder of this repository:
+Python 3.10 or later works; the notebooks were run with Python 3.14. With conda, `conda install -c conda-forge openmm pytorch` first, then the same `pip install -r requirements.txt`.
+
+### With uv, using the exact versions of `uv.lock`
 
 ```
 uv sync            # Python 3.14 and the exact library versions of uv.lock, in .venv
@@ -87,7 +94,11 @@ uv run pytest      # 24 tests, about 10 s
 uv run jupyter lab
 ```
 
-Open a notebook and choose Kernel → Restart Kernel and Run All Cells. Every code cell starts with an index comment such as `# c.7`, and the cells run in order from c.0. Each notebook runs in under a minute on a laptop, using the data in `data/`, the trained models in `models/` and the check results in `results/`.
+### In the browser, with nothing to install
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/lossofgenerality/polymer-neural-nets?quickstart=1)
+
+Click the button and then **Create codespace**; the theory notebook opens by itself. Choose the `.venv` kernel and click **Run All**.
 
 ### Making everything again
 

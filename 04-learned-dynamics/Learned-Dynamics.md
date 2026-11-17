@@ -36,25 +36,59 @@ A force field is useful only if a simulation driven by it behaves like the real 
 
 ## 0. Settings
 
+Cell c.0 makes the notebook run in any Jupyter: it installs missing libraries, finds the repository folder or downloads it once from GitHub into `~/polymer-neural-nets` when this notebook is opened on its own, and sets the style of figures and tables.
+
 ```python
 # c.0
-# settings and imports used by every cell below
-import json, math, time, warnings
-warnings.filterwarnings("ignore")   # library notices (tqdm, TorchScript) are not part of the results
+# Setup. This cell makes the notebook run in any Jupyter, three ways:
+#  (1) inside the repository folder (e.g. `uv run jupyter lab`, or `pip install -r requirements.txt` then `jupyter lab`);
+#  (2) in any Python environment: libraries that are missing are installed with pip into this kernel;
+#  (3) as a single notebook file on its own: the code and data of the repository are downloaded once from
+#      GitHub into the folder polymer-neural-nets in your home folder.
+import importlib.util, subprocess, sys, io, zipfile, urllib.request, warnings
 from pathlib import Path
+warnings.filterwarnings("ignore")   # library notices (tqdm, TorchScript) are not part of the results
+NEED = {"numpy": "numpy", "scipy": "scipy", "sympy": "sympy", "matplotlib": "matplotlib", "torch": "torch",
+        "torch_geometric": "torch-geometric", "openmm": "openmm", "IPython": "ipython"}
+missing = [pkg for mod, pkg in NEED.items() if importlib.util.find_spec(mod) is None]
+if missing:
+    print("installing", ", ".join(missing), "(first run only; torch is large) ...")
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", *missing])
+    except Exception:                                             # environments made by uv have no pip
+        subprocess.check_call(["uv", "pip", "install", "--python", sys.executable, *missing])
+def find_repo():
+    for q in [Path.cwd(), *Path.cwd().parents]:                  # (1) this notebook is inside the repository
+        if (q / "src" / "polymer_nn").is_dir() and (q / "data").is_dir():
+            return q
+    home = Path.home() / "polymer-neural-nets"                    # (3) download it once
+    if not (home / "src" / "polymer_nn").is_dir():
+        url = "https://github.com/lossofgenerality/polymer-neural-nets/archive/refs/heads/main.zip"
+        print("downloading the repository (code, data, models) from", url)
+        with zipfile.ZipFile(io.BytesIO(urllib.request.urlopen(url).read())) as z:
+            top = z.namelist()[0].split("/")[0]
+            for m in z.infolist():
+                rel = m.filename[len(top) + 1:]
+                if rel and not m.is_dir():
+                    (home / rel).parent.mkdir(parents=True, exist_ok=True)
+                    (home / rel).write_bytes(z.read(m))
+    return home
+ROOT = find_repo()
+sys.path.insert(0, str(ROOT / "src"))                             # use the repository's polymer_nn
+import json, math, time
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
 from polymer_nn import nbtools as nb
 from polymer_nn.nbtools import table, nform, sci, savefig, figFont, wFull, wHalf, red, blue, green, orange, grey
-ROOT = nb.setup(threads=2)          # plot style, 2 CPU threads, the repository folder
+nb.setup(threads=2)                 # plot style and 2 CPU threads; figures are saved in ./figures
 DATA = ROOT / "data"                # the reference data made by scripts/generate_data.py
 torch.manual_seed(0); rng = np.random.default_rng(0)
-print("repository:", ROOT.name, "| torch", torch.__version__, "| numpy", np.__version__)
+print("repository folder:", ROOT.name, "| Python", sys.version.split()[0], "| torch", torch.__version__, "| numpy", np.__version__)
 ```
 
 ```text
-repository: polymer-neural-nets | torch 2.15.0+cu132 | numpy 2.5.5
+repository folder: polymer-neural-nets | Python 3.14.6 | torch 2.15.0+cu132 | numpy 2.5.5
 ```
 
 ## 1. The network inside OpenMM
@@ -89,7 +123,7 @@ table([["quantity", "value", "expected"], ["steps run", "1000 (5 τ)", ""], ["wa
 | quantity | value | expected |
 |---|---|---|
 | steps run | 1000 (5 τ) |  |
-| wall time | 3.7 s |  |
+| wall time | 3.0 s |  |
 | mean bond length (σ) | 0.9718 | 0.971 (notebook 02) |
 | mean kinetic energy per bead (ε) | 1.457 | 1.5 = (3/2) k_BT |
 | learned potential energy per bead (ε) | 20.168 | ≈ 20 (reference, notebook 01) |
@@ -245,9 +279,9 @@ torch.set_num_threads(2)
 
 | force field | time per evaluation | relative |
 |---|---|---|
-| exact Kremer–Grest (OpenMM, Reference platform) | 0.27 ms | 1 × |
-| InvariantGNN | 3.75 ms | 14 × |
-| EquivariantGNN | 6.14 ms | 23 × |
+| exact Kremer–Grest (OpenMM, Reference platform) | 0.24 ms | 1 × |
+| InvariantGNN | 3.22 ms | 13 × |
+| EquivariantGNN | 5.27 ms | 22 × |
 
 For the Kremer–Grest model itself the networks are 10–20 times slower than the exact formula, which takes a few arithmetic operations per pair. That is expected and not the point. The purpose of this repository is to build and validate the method on a model where the exact answer is known. The method pays off when the reference is expensive: all-atom force fields, quantum-chemical energies, or coarse-grained potentials of mean force that have no simple formula (notebook 00, section 8). There the network costs the same as here, a few thousand operations per bead, and the reference costs far more. On a GPU, and through `openmm-torch` instead of a Python call every step, the cost per bead drops by orders of magnitude (`docs/running-large.md`).
 
