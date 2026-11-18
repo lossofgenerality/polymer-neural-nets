@@ -4,7 +4,7 @@ Graph neural networks that learn the forces of a polymer chain and then drive it
 
 Dara O Shayda · Noor Hoshino
 
-Version **1.0.0** (17 November 2026) · Python 3.14 · free and open-source software only: NumPy, SciPy, SymPy, Matplotlib, PyTorch, PyTorch Geometric, OpenMM.
+Version **1.0.0** (17 November 2026) · Python 3.14 · free and open-source software only: NumPy, SciPy, SymPy, Matplotlib, PyTorch, PyTorch Geometric, OpenMM. The [Wolfram Language edition](wolfram/) needs Wolfram 15.
 
 ## Contents
 
@@ -64,6 +64,16 @@ Each folder holds the notebook in three editions:
 | `*.md` | Markdown edition with LaTeX equations, tables and every figure (GitHub renders it) |
 | `*.pdf` | printed edition, A4 |
 | `figures/` | every figure as PNG |
+
+### [Wolfram Language edition](wolfram/)
+
+*The same idea in the Wolfram Language, with no Python or OpenMM.*
+
+- [**Graph Networks for Polymers in the Wolfram Language**](wolfram/PolymerNN-Wolfram.nb): the main notebook. It builds a self-contained bead-spring model and draws the chain as a graph. The network is built from `NetGraph` layers and its computational graph is drawn. It is trained by force matching, then drives compiled Langevin and NVE runs at N = 16, 32 and 64. The force error is 0.8% at 32 beads and 0.9% on unseen 64-bead chains.
+- [**The Layers Behind a Graph Force Network**](wolfram/NetLayers-Tutorial.nb): a tutorial on every layer the network uses (`LinearLayer`, `ElementwiseLayer`, `NetChain`, `NetMapOperator`, `ThreadingLayer`, `ReplicateLayer`, `NetArrayLayer`, `DotLayer`, `NetGraph`, `NetTrain`), each checked by hand on a four-bead chain. It ends by training a mini force network to learn a spring.
+- [`PolymerNN.wl`](wolfram/PolymerNN.wl), the package; [`wolfram/docs/force-network.md`](wolfram/docs/force-network.md) · [`.pdf`](wolfram/docs/force-network.pdf), the network layer by layer with its computational graph in colour.
+
+Details, results and how to run it are in [`wolfram/README.md`](wolfram/README.md).
 
 ### References
 
@@ -201,6 +211,7 @@ scripts/           generate_data, train, run_md, make_references, export_edition
 tests/             24 tests: physics, symmetries, gradients, cutoff smoothness, MD, training
 data/  models/  results/   reference data, trained checkpoints, outputs of the checks
 docs/              how-it-works.md (a map of the code), running-large.md, open-source.md, references
+wolfram/           the Wolfram Language edition: PolymerNN.wl, two notebooks, docs/, scripts/
 ```
 
 Every module begins with a long explanation of what it does and why, with the equations it implements; [`docs/how-it-works.md`](docs/how-it-works.md) maps each step of the pipeline to its code and to the notebook section that explains it.

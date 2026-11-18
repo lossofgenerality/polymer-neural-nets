@@ -1,0 +1,81 @@
+// Computational graph of the PolymerNN force network (N = 32 beads: 31 bonds, 465 non-bonded pairs)
+// © 2026 Computational Classnotes · CC BY-NC-SA 4.0
+digraph ForceNet {
+  graph [rankdir=LR, bgcolor="white", fontname="Helvetica", fontsize=22, labelloc=t, nodesep=0.35, ranksep=0.55, pad=0.4,
+         label=<<B>PolymerNN force network</B><BR/><FONT POINT-SIZE="15">N = 32 beads · 31 bonds · 465 non-bonded pairs · 3,266 trainable parameters</FONT>>];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=14, penwidth=2, margin="0.18,0.08"];
+  edge  [fontname="Helvetica", fontsize=12, color="#555555", fontcolor="#333333", penwidth=1.6, arrowsize=0.8];
+
+  // ---- inputs (blue)
+  node [color="#2F6DB5", fillcolor="#DCE8F7"];
+  bf [label=<<B>bf</B><BR/><FONT POINT-SIZE="11">bond radial basis ρ(r)</FONT>>];
+  bu [label=<<B>bu</B><BR/><FONT POINT-SIZE="11">bond unit vectors u</FONT>>];
+  nf [label=<<B>nf</B><BR/><FONT POINT-SIZE="11">pair radial basis ρ(r)</FONT>>];
+  nc [label=<<B>nc</B><BR/><FONT POINT-SIZE="11">pair cutoff c(r)</FONT>>];
+  nu [label=<<B>nu</B><BR/><FONT POINT-SIZE="11">pair unit vectors u</FONT>>];
+
+  // ---- learned edge networks (orange)
+  node [color="#E07B00", fillcolor="#FDE9CF"];
+  phiB [label=<<B>phiB</B>  NetMapOperator<BR/><FONT POINT-SIZE="11">MLP 16→32→tanh→32→tanh→1<BR/>1,633 parameters, shared by all bonds</FONT>>];
+  phiN [label=<<B>phiN</B>  NetMapOperator<BR/><FONT POINT-SIZE="11">MLP 16→32→tanh→32→tanh→1<BR/>1,633 parameters, shared by all pairs</FONT>>];
+
+  // ---- frozen arrays (grey)
+  node [color="#6B6B6B", fillcolor="#E9E9E9"];
+  Ab [label=<<B>Ab</B>  NetArrayLayer<BR/><FONT POINT-SIZE="11">bond incidence matrix<BR/>frozen (learning rate 0)</FONT>>];
+  An [label=<<B>An</B>  NetArrayLayer<BR/><FONT POINT-SIZE="11">pair incidence matrix<BR/>frozen (learning rate 0)</FONT>>];
+
+  // ---- fixed operations (green)
+  node [color="#2E8B57", fillcolor="#DFF2E7"];
+  cut  [label=<<B>cut</B><BR/><FONT POINT-SIZE="11">φ × c(r)</FONT>>];
+  repB [label=<<B>repB</B><BR/><FONT POINT-SIZE="11">replicate ×3</FONT>>];
+  repN [label=<<B>repN</B><BR/><FONT POINT-SIZE="11">replicate ×3</FONT>>];
+  mB   [label=<<B>mB</B><BR/><FONT POINT-SIZE="11">message m = f u</FONT>>];
+  mN   [label=<<B>mN</B><BR/><FONT POINT-SIZE="11">message m = f u</FONT>>];
+  sumB [label=<<B>sumB</B><BR/><FONT POINT-SIZE="11">A·m  (sum per bead)</FONT>>];
+  sumN [label=<<B>sumN</B><BR/><FONT POINT-SIZE="11">A·m  (sum per bead)</FONT>>];
+  total [label=<<B>total</B><BR/><FONT POINT-SIZE="11">bond + non-bonded</FONT>>];
+
+  // ---- output (red)
+  node [color="#C0392B", fillcolor="#F8DAD6"];
+  F [label=<<B>F</B><BR/><FONT POINT-SIZE="11">force on every bead</FONT>>];
+
+  // bond branch
+  bf -> phiB  [label="31×16"];
+  phiB -> repB [label="31"];
+  repB -> mB  [label="31×3"];
+  bu -> mB    [label="31×3"];
+  mB -> sumB  [label="31×3"];
+  Ab -> sumB  [label="32×31"];
+  sumB -> total [label="32×3"];
+
+  // non-bonded branch
+  nf -> phiN  [label="465×16"];
+  phiN -> cut [label="465"];
+  nc -> cut   [label="465"];
+  cut -> repN [label="465"];
+  repN -> mN  [label="465×3"];
+  nu -> mN    [label="465×3"];
+  mN -> sumN  [label="465×3"];
+  An -> sumN  [label="32×465"];
+  sumN -> total [label="32×3"];
+
+  total -> F  [label="32×3", penwidth=2.4, color="#C0392B"];
+
+  { rank=same; bf; nf; }
+  { rank=same; bu; nc; }
+
+  // legend and licence, one compact node under the graph
+  legend [shape=plaintext, style="", margin=0, label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="6" CELLPADDING="6" STYLE="rounded">
+      <TR><TD BGCOLOR="#DCE8F7" COLOR="#2F6DB5">input port</TD>
+</TR>
+        <TR><TD BGCOLOR="#FDE9CF" COLOR="#E07B00">learned network</TD></TR>
+        <TR><TD BGCOLOR="#E9E9E9" COLOR="#6B6B6B">frozen array</TD></TR>
+        <TR><TD BGCOLOR="#DFF2E7" COLOR="#2E8B57">fixed operation</TD></TR>
+        <TR><TD BGCOLOR="#F8DAD6" COLOR="#C0392B">output port</TD></TR>
+        <TR><TD BORDER="0"><FONT POINT-SIZE="11" COLOR="#777777">edge labels: tensor shapes (per frame)<BR/>© 2026 Computational Classnotes · CC BY-NC-SA 4.0</FONT></TD>
+      </TR>
+    </TABLE>>];
+  { rank=same; F; legend; }
+  total -> legend [style=invis];
+}
