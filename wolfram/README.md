@@ -11,8 +11,8 @@ Tested with Wolfram 15.0 on macOS (Apple silicon).
 
 | file | what it is |
 |---|---|
-| [`PolymerNN-Wolfram.nb`](PolymerNN-Wolfram.nb) | **Graph Networks for Polymers in the Wolfram Language.** The main notebook covers the reference model, the chain as a graph, the network and its computational graph, training, the learned pair forces, the force errors, NVE energy conservation, and Langevin runs at N = 16, 32 and 64. It takes about 7 minutes on a laptop CPU. |
-| [`NetLayers-Tutorial.nb`](NetLayers-Tutorial.nb) | **The Layers Behind a Graph Force Network.** This tutorial covers every layer the network uses, one at a time, on a four-bead chain, each checked against plain Wolfram Language. The layers are `LinearLayer`, `ElementwiseLayer`, `NetChain`, `NetMapOperator`, `ThreadingLayer`, `ReplicateLayer`, `NetArrayLayer` and `DotLayer`, followed by `NetGraph` with `NetPort` and `NetTrain`. It ends by training a mini force network to learn a spring. It takes about 15 seconds and does not need the package. |
+| [`PolymerNN-Wolfram.nb`](PolymerNN-Wolfram.nb) · [`.pdf`](PolymerNN-Wolfram.pdf) | **Graph Networks for Polymers in the Wolfram Language.** The main notebook covers the reference model, the chain as a graph, the network and its computational graph, training, the learned pair forces, the force errors, NVE energy conservation, and Langevin runs at N = 16, 32 and 64. It takes about 7 minutes on a laptop CPU. |
+| [`NetLayers-Tutorial.nb`](NetLayers-Tutorial.nb) · [`.pdf`](NetLayers-Tutorial.pdf) | **The Layers Behind a Graph Force Network.** This tutorial covers every layer the network uses, one at a time, on a four-bead chain, each checked against plain Wolfram Language. The layers are `LinearLayer`, `ElementwiseLayer`, `NetChain`, `NetMapOperator`, `ThreadingLayer`, `ReplicateLayer`, `NetArrayLayer` and `DotLayer`, followed by `NetGraph` with `NetPort` and `NetTrain`. It ends by training a mini force network to learn a spring. It takes about 15 seconds and does not need the package. |
 | [`PolymerNN.wl`](PolymerNN.wl) | The package: reference model, compiled BAOAB Langevin and velocity-Verlet integrators, chain graph, network, training, learned and tabulated forces, observables, and `ForceNetGraphPlot`. Every function is commented. |
 | [`docs/force-network.md`](docs/force-network.md) · [`.pdf`](docs/force-network.pdf) | The network layer by layer: the computational graph in colour, the tensor shape on every edge, and why each piece is there. |
 | [`docs/force-net-graph-tb.png`](docs/force-net-graph-tb.png) · [`.svg`](docs/force-net-graph-tb.svg) | The computational graph drawn top to bottom, for pages. |
@@ -26,7 +26,7 @@ Tested with Wolfram 15.0 on macOS (Apple silicon).
 
 Put the three files `PolymerNN.wl`, `PolymerNN-Wolfram.nb` and `NetLayers-Tutorial.nb` in one folder, open a notebook and choose Evaluation → Evaluate Notebook. The main notebook loads the package from its own folder. Loops compile to C when a C compiler is installed (on macOS, the Xcode command-line tools), and otherwise to the Wolfram virtual machine.
 
-To rebuild the notebooks from their sources, run `python3 make_notebook.py` and `python3 make_layers_notebook.py` in `scripts/`.
+The notebooks are saved evaluated, with every output, and each has a printed `.pdf` edition. To rebuild them from their sources, run `python3 make_notebook.py` and `python3 make_layers_notebook.py` in `scripts/`. That writes the notebooks without outputs; evaluate them in Wolfram to fill them in.
 
 ## The model
 

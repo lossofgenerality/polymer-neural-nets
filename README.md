@@ -69,8 +69,8 @@ Each folder holds the notebook in three editions:
 
 *The same idea in the Wolfram Language, with no Python or OpenMM.*
 
-- [**Graph Networks for Polymers in the Wolfram Language**](wolfram/PolymerNN-Wolfram.nb): the main notebook. It builds a self-contained bead-spring model and draws the chain as a graph. The network is built from `NetGraph` layers and its computational graph is drawn. It is trained by force matching, then drives compiled Langevin and NVE runs at N = 16, 32 and 64. The force error is 0.8% at 32 beads and 0.9% on unseen 64-bead chains.
-- [**The Layers Behind a Graph Force Network**](wolfram/NetLayers-Tutorial.nb): a tutorial on every layer the network uses (`LinearLayer`, `ElementwiseLayer`, `NetChain`, `NetMapOperator`, `ThreadingLayer`, `ReplicateLayer`, `NetArrayLayer`, `DotLayer`, `NetGraph`, `NetTrain`), each checked by hand on a four-bead chain. It ends by training a mini force network to learn a spring.
+- [**Graph Networks for Polymers in the Wolfram Language**](wolfram/PolymerNN-Wolfram.nb) ([PDF](wolfram/PolymerNN-Wolfram.pdf)): the main notebook. It builds a self-contained bead-spring model and draws the chain as a graph. The network is built from `NetGraph` layers and its computational graph is drawn. It is trained by force matching, then drives compiled Langevin and NVE runs at N = 16, 32 and 64. The force error is 0.8% at 32 beads and 0.9% on unseen 64-bead chains.
+- [**The Layers Behind a Graph Force Network**](wolfram/NetLayers-Tutorial.nb) ([PDF](wolfram/NetLayers-Tutorial.pdf)): a tutorial on every layer the network uses (`LinearLayer`, `ElementwiseLayer`, `NetChain`, `NetMapOperator`, `ThreadingLayer`, `ReplicateLayer`, `NetArrayLayer`, `DotLayer`, `NetGraph`, `NetTrain`), each checked by hand on a four-bead chain. It ends by training a mini force network to learn a spring.
 - [`PolymerNN.wl`](wolfram/PolymerNN.wl), the package; [`wolfram/docs/force-network.md`](wolfram/docs/force-network.md) · [`.pdf`](wolfram/docs/force-network.pdf), the network layer by layer with its computational graph in colour.
 
 Details, results and how to run it are in [`wolfram/README.md`](wolfram/README.md).
