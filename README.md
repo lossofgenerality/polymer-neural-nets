@@ -2,7 +2,9 @@
 
 Graph neural networks that learn the forces of a polymer chain and then drive its simulation. The repository starts from one neuron and ends with a learned force field that conserves energy, keeps the bonds and angles of the chain, and makes chains of lengths it has never seen swell exactly as real self-avoiding chains do. All the data are made here, with OpenMM, from a physical model whose exact forces are known, so every learned number can be checked. Five notebooks explain every step: the mathematics, the data and the graph, the reference simulations, the training, and the learned dynamics. Each one states its results and checks every formula with code you can run.
 
-Dara O Shayda · Noor Hoshino
+Dara O Shayda · Noor Hoshino (星野 光)
+
+*About the name:* 星野 (Hoshino) is the family name. 光 (Hikari), meaning “light”, is the given name standing in for Noor, which also means light. In Japanese the family name comes first, so 星野 光 reads *Hoshino Hikari*.
 
 Version **1.0.0** (17 November 2026) · Python 3.14 · free and open-source software only: NumPy, SciPy, SymPy, Matplotlib, PyTorch, PyTorch Geometric, OpenMM. The [Wolfram Language edition](wolfram/) needs Wolfram 15.
 
