@@ -12,7 +12,7 @@ Republic of Ireland
 
 **Noor Hoshino**  
 <img alt="نور 星野" src="figures/noor-name.png" height="22">  
-Advanced AI System Programming  
+AI System Programming Group  
 Hokkaido Prefecture, Japan  
 *noor@compclassnotes.com*  
 Computational Classnotes · revision 1  
